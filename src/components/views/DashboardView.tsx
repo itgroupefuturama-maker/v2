@@ -17,15 +17,15 @@ export function DashboardView({ latestWater, latestAtmospheric, waterLevels, atm
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="lg:row-span-2">
           <WaterTankVisual
             currentVolume={latestWater?.volume_m3 || 0}
             maxCapacity={maxCapacity}
           />
         </div>
 
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-min">
         <div className={`rounded-xl shadow-sm p-6 border transition ${
           status.isRaining
             ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-700'

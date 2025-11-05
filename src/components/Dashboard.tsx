@@ -8,7 +8,7 @@ import { WaterLevelView } from './views/WaterLevelView';
 import { WeatherView } from './views/WeatherView';
 import { StatisticsView } from './views/StatisticsView';
 import { UsersView } from './views/UsersView';
-import { HistoryView } from './views/HistoryView';
+import { SettingsView } from './views/SettingsView';
 
 export function Dashboard() {
   const { signOut, user } = useAuth();
@@ -164,8 +164,8 @@ export function Dashboard() {
         return 'Météo';
       case 'stats':
         return 'Statistiques';
-      case 'history':
-        return 'Historique';
+      case 'settings':
+        return 'Paramètres';
       case 'users':
         return 'Utilisateurs';
       default:
@@ -191,8 +191,8 @@ export function Dashboard() {
         return <WeatherView atmospheric={atmospheric} latestAtmospheric={latestAtmospheric} />;
       case 'stats':
         return <StatisticsView waterLevels={waterLevels} atmospheric={atmospheric} />;
-      case 'history':
-        return <HistoryView />;
+      case 'settings':
+        return <SettingsView waterLevels={waterLevels} />;
       case 'users':
         if (!user?.is_admin) {
           return (

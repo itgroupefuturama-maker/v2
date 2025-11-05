@@ -1,4 +1,4 @@
-import { Droplets, Thermometer, BarChart3, Home, Users, History, Upload, Moon, Sun } from 'lucide-react';
+import { Droplets, Thermometer, BarChart3, Home, Users, Settings, Upload, Moon, Sun } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { TankSettings } from './TankSettings';
@@ -21,7 +21,7 @@ export function Sidebar({ onNavigate, activeSection, waterLevels = [] }: Sidebar
     { id: 'water', icon: Droplets, label: 'Niveau d\'eau' },
     { id: 'weather', icon: Thermometer, label: 'Météo' },
     { id: 'stats', icon: BarChart3, label: 'Statistiques' },
-    { id: 'history', icon: History, label: 'Historique' },
+    { id: 'settings', icon: Settings, label: 'Paramètres' },
     { id: 'users', icon: Users, label: 'Utilisateurs', adminOnly: true },
   ];
 
@@ -139,7 +139,6 @@ export function Sidebar({ onNavigate, activeSection, waterLevels = [] }: Sidebar
       </nav>
 
       <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-        <TankSettings waterLevels={waterLevels} />
         <button
           onClick={toggleDarkMode}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
