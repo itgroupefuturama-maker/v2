@@ -11,10 +11,7 @@ export function WaterTankVisual({ currentVolume, maxCapacity }: WaterTankVisualP
   }, [currentVolume, maxCapacity]);
 
   const getFillColor = () => {
-    if (fillPercentage > 75) return 'from-blue-400 to-blue-600';
-    if (fillPercentage > 50) return 'from-cyan-400 to-cyan-600';
-    if (fillPercentage > 25) return 'from-yellow-400 to-yellow-600';
-    return 'from-orange-400 to-orange-600';
+    return 'from-blue-400 to-blue-600';
   };
 
   const getStatusText = () => {

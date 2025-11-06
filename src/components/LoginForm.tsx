@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn } from 'lucide-react';
 import { PasswordRecovery } from './PasswordRecovery';
 
 export function LoginForm() {
@@ -10,7 +9,15 @@ export function LoginForm() {
   const [showRecovery, setShowRecovery] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [logoSrc, setLogoSrc] = useState('/images/logo.svg');
   const { signIn, signUp } = useAuth();
+
+  useEffect(() => {
+    const savedLogo = localStorage.getItem('customLogo');
+    if (savedLogo) {
+      setLogoSrc(savedLogo);
+    }
+  }, []);
 
   if (showRecovery) {
     return <PasswordRecovery onBack={() => setShowRecovery(false)} />;
@@ -39,10 +46,13 @@ export function LoginForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="flex items-center justify-center mb-6">
-          <div className="bg-blue-600 p-3 rounded-full">
-            <LogIn className="w-8 h-8 text-white" />
-          </div>
+        <div className="flex items-center justify-center mb-8">
+          <img
+            src={logoSrc}
+            alt="Logo"
+            className="h-24 w-24 object-contain"
+            onError={() => setLogoSrc('/images/logo.svg')}
+          />
         </div>
 
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">

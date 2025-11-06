@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, Download } from 'lucide-react';
+import { Settings, Download, Database, Copy, Check } from 'lucide-react';
 import { supabase, WaterLevel } from '../../lib/supabase';
 
 interface SettingsViewProps {
@@ -11,6 +11,9 @@ export function SettingsView({ waterLevels }: SettingsViewProps) {
   const [tempCapacity, setTempCapacity] = useState('10');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [supabaseUrl, setSupabaseUrl] = useState('');
+  const [supabaseKey, setSupabaseKey] = useState('');
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
     const savedCapacity = localStorage.getItem('tankMaxCapacity');
@@ -19,7 +22,18 @@ export function SettingsView({ waterLevels }: SettingsViewProps) {
       setMaxCapacity(capacity);
       setTempCapacity(savedCapacity);
     }
+
+    const url = import.meta.env.VITE_SUPABASE_URL || '';
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+    setSupabaseUrl(url);
+    setSupabaseKey(key);
   }, []);
+
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   const handleSaveCapacity = () => {
     const capacity = parseFloat(tempCapacity);
@@ -116,6 +130,68 @@ export function SettingsView({ waterLevels }: SettingsViewProps) {
           >
             Enregistrer
           </button>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-4">
+          <Database className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Configuration Supabase</h3>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              URL Supabase
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={supabaseUrl}
+                readOnly
+                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg bg-gray-50 font-mono text-sm outline-none"
+              />
+              <button
+                onClick={() => copyToClipboard(supabaseUrl, 'url')}
+                className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                {copiedField === 'url' ? (
+                  <Check className="w-5 h-5" />
+                ) : (
+                  <Copy className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Clé API Anon
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="password"
+                value={supabaseKey}
+                readOnly
+                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg bg-gray-50 font-mono text-sm outline-none"
+              />
+              <button
+                onClick={() => copyToClipboard(supabaseKey, 'key')}
+                className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                {copiedField === 'key' ? (
+                  <Check className="w-5 h-5" />
+                ) : (
+                  <Copy className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mt-4">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>Note:</strong> Ces informations proviennent de votre fichier .env. Pour modifier la connexion Supabase, mettez à jour les variables d'environnement VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY, puis redémarrez l'application.
+            </p>
+          </div>
         </div>
       </div>
 

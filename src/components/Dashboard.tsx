@@ -9,6 +9,7 @@ import { WeatherView } from './views/WeatherView';
 import { StatisticsView } from './views/StatisticsView';
 import { UsersView } from './views/UsersView';
 import { SettingsView } from './views/SettingsView';
+import { AIAssistantView } from './views/AIAssistantView';
 
 export function Dashboard() {
   const { signOut, user } = useAuth();
@@ -166,6 +167,8 @@ export function Dashboard() {
         return 'Statistiques';
       case 'settings':
         return 'Paramètres';
+      case 'ai':
+        return 'Assistant IA';
       case 'users':
         return 'Utilisateurs';
       default:
@@ -193,6 +196,15 @@ export function Dashboard() {
         return <StatisticsView waterLevels={waterLevels} atmospheric={atmospheric} />;
       case 'settings':
         return <SettingsView waterLevels={waterLevels} />;
+      case 'ai':
+        return (
+          <AIAssistantView
+            waterLevels={waterLevels}
+            atmospheric={atmospheric}
+            latestWater={latestWater}
+            latestAtmospheric={latestAtmospheric}
+          />
+        );
       case 'users':
         if (!user?.is_admin) {
           return (

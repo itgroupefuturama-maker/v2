@@ -1,4 +1,4 @@
-import { Droplets, Thermometer, BarChart3, Home, Users, Settings, Upload, Moon, Sun } from 'lucide-react';
+import { Droplets, Thermometer, BarChart3, Home, Users, Settings, Upload, Moon, Sun, Bot } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { TankSettings } from './TankSettings';
@@ -21,6 +21,7 @@ export function Sidebar({ onNavigate, activeSection, waterLevels = [] }: Sidebar
     { id: 'water', icon: Droplets, label: 'Niveau d\'eau' },
     { id: 'weather', icon: Thermometer, label: 'Météo' },
     { id: 'stats', icon: BarChart3, label: 'Statistiques' },
+    { id: 'ai', icon: Bot, label: 'Assistant IA' },
     { id: 'settings', icon: Settings, label: 'Paramètres' },
     { id: 'users', icon: Users, label: 'Utilisateurs', adminOnly: true },
   ];

@@ -1,4 +1,5 @@
-import { BarChart3, TrendingUp, Activity, Database } from 'lucide-react';
+import { useState } from 'react';
+import { BarChart3, TrendingUp, Activity, Database, Calendar } from 'lucide-react';
 import { WaterLevel, AtmosphericCondition } from '../../lib/supabase';
 
 interface StatisticsViewProps {
@@ -7,27 +8,49 @@ interface StatisticsViewProps {
 }
 
 export function StatisticsView({ waterLevels, atmospheric }: StatisticsViewProps) {
-  const calculateWaterStats = () => {
-    if (waterLevels.length === 0) {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const calculateWaterStats = (data: WaterLevel[]) => {
+    if (data.length === 0) {
       return {
         total: 0,
         avgVolume: 0,
         maxVolume: 0,
         minVolume: 0,
-        totalLiters: 0
+        consumption: 0
       };
     }
 
-    const volumes = waterLevels.map(w => w.volume_m3);
-    const liters = waterLevels.map(w => w.volume_liters);
+    const volumes = data.map(w => w.volume_m3);
+
+    let consumption = 0;
+    if (data.length >= 2) {
+      const firstVolume = data[data.length - 1].volume_m3;
+      const lastVolume = data[0].volume_m3;
+      consumption = Math.abs(firstVolume - lastVolume);
+    }
 
     return {
-      total: waterLevels.length,
+      total: data.length,
       avgVolume: volumes.reduce((a, b) => a + b, 0) / volumes.length,
       maxVolume: Math.max(...volumes),
       minVolume: Math.min(...volumes),
-      totalLiters: liters.reduce((a, b) => a + b, 0)
+      consumption: consumption
     };
+  };
+
+  const getFilteredWaterLevels = () => {
+    if (!startDate && !endDate) return waterLevels;
+
+    return waterLevels.filter(level => {
+      const levelDate = new Date(level.timestamp);
+      const start = startDate ? new Date(startDate) : new Date(0);
+      const end = endDate ? new Date(endDate) : new Date();
+      end.setHours(23, 59, 59, 999);
+
+      return levelDate >= start && levelDate <= end;
+    });
   };
 
   const calculateAtmosphericStats = () => {
@@ -67,7 +90,8 @@ export function StatisticsView({ waterLevels, atmospheric }: StatisticsViewProps
     return avgDiff / 1000 / 60;
   };
 
-  const waterStats = calculateWaterStats();
+  const filteredWaterLevels = getFilteredWaterLevels();
+  const waterStats = calculateWaterStats(filteredWaterLevels);
   const atmosphericStats = calculateAtmosphericStats();
   const dataFrequency = calculateDataFrequency();
 
@@ -79,6 +103,37 @@ export function StatisticsView({ waterLevels, atmospheric }: StatisticsViewProps
           <h2 className="text-2xl font-bold">Statistiques globales</h2>
         </div>
         <p className="text-sm opacity-90">Analyse complète des données collectées</p>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filtrer par période</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Date de début
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Date de fin
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -147,8 +202,8 @@ export function StatisticsView({ waterLevels, atmospheric }: StatisticsViewProps
                 <p className="text-xl font-bold text-red-600">{waterStats.minVolume.toFixed(3)} m³</p>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total cumulé</p>
-                <p className="text-xl font-bold text-cyan-600">{waterStats.totalLiters.toFixed(0)} L</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Consommation</p>
+                <p className="text-xl font-bold text-cyan-600">{waterStats.consumption.toFixed(3)} m³</p>
               </div>
             </div>
           </div>
