@@ -22,7 +22,7 @@ export function WaterTankCompact({ currentVolume, maxCapacity }: WaterTankCompac
   };
 
   return (
-    <div className="relative w-full h-80 border-4 border-gray-3 dark:border-gray-600 rounded-3xl overflow-hidden bg-gray-50 dark:bg-gray-900 flex flex-col justify-end shadow-lg">
+    <div className="relative w-full h-80 border-4 border-gray-7 dark:border-gray-600 rounded-3xl overflow-hidden bg-gray-50 dark:bg-gray-900 flex flex-col justify-end shadow-lg">
       <div
         className={`absolute bottom-0 left-0 w-full bg-gradient-to-t ${getFillColor()} transition-all duration-1000 ease-out`}
         style={{ height: `${fillPercentage}%` }}
