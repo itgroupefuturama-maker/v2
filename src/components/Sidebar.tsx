@@ -83,7 +83,7 @@ export function Sidebar({ onNavigate, activeSection, waterLevels = [] }: Sidebar
 
           <div className="flex-1">
             <h1 className="text-lg font-bold text-gray-900 dark:text-white">Education For Madagascar</h1>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Education For Madagascar</p>
+            
           </div>
 
           {showUpload && (
