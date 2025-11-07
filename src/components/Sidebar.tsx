@@ -22,8 +22,8 @@ export function Sidebar({ onNavigate, activeSection, waterLevels = [] }: Sidebar
     { id: 'weather', icon: Thermometer, label: 'Météo' },
     { id: 'stats', icon: BarChart3, label: 'Statistiques' },
     { id: 'ai', icon: Bot, label: 'Assistant IA' },
-    { id: 'settings', icon: Settings, label: 'Paramètres' },
     { id: 'users', icon: Users, label: 'Utilisateurs', adminOnly: true },
+    { id: 'settings', icon: Settings, label: 'Paramètres' },
   ];
 
   useEffect(() => {
