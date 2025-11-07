@@ -59,7 +59,7 @@ export function LoginForm() {
           Dashboard Cuve
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Education for Madagascar
+          Education For Madagascar
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
