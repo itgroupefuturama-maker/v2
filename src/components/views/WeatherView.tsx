@@ -11,6 +11,43 @@ export function WeatherView({ atmospheric, latestAtmospheric }: WeatherViewProps
   const weekForecast = getWeekForecast();
   const rainAlerts = getRainAlerts();
 
+  const getWeeklyData = () => {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const weeklyData = atmospheric.filter(item => {
+      const itemDate = new Date(item.timestamp);
+      return itemDate >= sevenDaysAgo && itemDate <= now;
+    });
+
+    const groupedByDay: { [key: string]: AtmosphericCondition[] } = {};
+
+    weeklyData.forEach(item => {
+      const date = new Date(item.timestamp);
+      const dateStr = date.toLocaleDateString('fr-FR');
+      if (!groupedByDay[dateStr]) {
+        groupedByDay[dateStr] = [];
+      }
+      groupedByDay[dateStr].push(item);
+    });
+
+    return Object.entries(groupedByDay).map(([date, items]) => {
+      const temps = items.map(a => a.temperature);
+      const humidities = items.map(a => a.humidity);
+
+      return {
+        date,
+        avgTemp: temps.reduce((a, b) => a + b, 0) / temps.length,
+        maxTemp: Math.max(...temps),
+        minTemp: Math.min(...temps),
+        avgHumidity: humidities.reduce((a, b) => a + b, 0) / humidities.length,
+        maxHumidity: Math.max(...humidities),
+        minHumidity: Math.min(...humidities),
+        readings: items.length
+      };
+    }).reverse();
+  };
+
   const calculateStats = () => {
     if (atmospheric.length === 0) {
       return {
@@ -35,6 +72,8 @@ export function WeatherView({ atmospheric, latestAtmospheric }: WeatherViewProps
       minHumidity: Math.min(...humidities)
     };
   };
+
+  const weeklyData = getWeeklyData();
 
   const stats = calculateStats();
 
@@ -203,7 +242,58 @@ export function WeatherView({ atmospheric, latestAtmospheric }: WeatherViewProps
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Historique météo</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Résumé - Semaine glissante (7 derniers jours)</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-200 dark:border-gray-700">
+                <th className="text-left py-3 px-3 text-gray-600 dark:text-gray-400 font-semibold">Date</th>
+                <th className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 font-semibold">Temp. Moy</th>
+                <th className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 font-semibold">Max/Min</th>
+                <th className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 font-semibold">Humidité</th>
+                <th className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 font-semibold">Lectures</th>
+              </tr>
+            </thead>
+            <tbody>
+              {weeklyData.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-500">Aucune donnée pour les 7 derniers jours</td>
+                </tr>
+              ) : (
+                weeklyData.map((day, idx) => (
+                  <tr key={idx} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <td className="py-3 px-3 font-medium text-gray-900 dark:text-white">{day.date}</td>
+                    <td className="text-center py-3 px-3">
+                      <span className="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-lg font-semibold">
+                        {day.avgTemp.toFixed(1)}°C
+                      </span>
+                    </td>
+                    <td className="text-center py-3 px-3 text-gray-600 dark:text-gray-400">
+                      <span className="text-red-600 dark:text-red-400">{day.maxTemp.toFixed(1)}°</span>
+                      <span className="text-gray-400"> / </span>
+                      <span className="text-blue-600 dark:text-blue-400">{day.minTemp.toFixed(1)}°</span>
+                    </td>
+                    <td className="text-center py-3 px-3">
+                      <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-lg font-semibold">
+                        {day.avgHumidity.toFixed(0)}%
+                      </span>
+                    </td>
+                    <td className="text-center py-3 px-3 text-gray-600 dark:text-gray-400 font-medium">
+                      {day.readings}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Historique météo complet</h3>
         </div>
         <div className="overflow-y-auto max-h-[500px]">
           {atmospheric.length === 0 ? (
