@@ -98,34 +98,26 @@ export function DashboardView({ latestWater, latestAtmospheric, waterLevels, atm
           </div>
         </div>
 
-        <div className={`rounded-xl shadow-sm p-6 border transition ${
-          status.isPumpActive
-            ? 'bg-gradient-to-br from-green-500 to-green-600 border-green-700'
-            : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700'
-        }`}>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-3 mb-4">
-            <div className={`p-3 rounded-lg ${
-              status.isPumpActive ? 'bg-green-700' : 'bg-gray-100 dark:bg-gray-700'
-            }`}>
-              <Power className={`w-6 h-6 ${
-                status.isPumpActive ? 'text-white' : 'text-gray-600 dark:text-gray-400'
-              }`} />
+            <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-lg">
+              <Droplets className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <h3 className={`text-sm font-medium ${
-                status.isPumpActive ? 'text-green-100' : 'text-gray-600 dark:text-gray-400'
-              }`}>État de la pompe</h3>
-              <p className={`text-2xl font-bold ${
-                status.isPumpActive ? 'text-white' : 'text-gray-900 dark:text-white'
-              }`}>
-                {status.isPumpActive ? 'EN MARCHE' : 'Arrêtée'}
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Consommation journalière</h3>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {waterLevels.length > 0
+                  ? Math.max(0, (waterLevels[0]?.volume_liters || 0) - (waterLevels[waterLevels.length - 1]?.volume_liters || 0)).toFixed(0)
+                  : '0'
+                } L
               </p>
             </div>
           </div>
-          <div className={`text-xs ${
-            status.isPumpActive ? 'text-green-100' : 'text-gray-500'
-          }`}>
-            {status.isPumpActive ? '3 diminutions successives' : 'Pas d\'activité'}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {waterLevels.length > 1
+              ? `De ${new Date(waterLevels[waterLevels.length - 1].timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} à ${new Date(waterLevels[0].timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+              : 'Pas assez de données'
+            }
           </div>
         </div>
 
